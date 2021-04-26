@@ -19,9 +19,4 @@ public final class KafkaController {
     public void sendMessageToKafkaTopic(@RequestParam String message) {
         producerService.sendMessage(message);
     }
-
-    @PostMapping(value = "/publish2")
-    public void sendMessageToKafkaTopicError(@RequestParam String message) {
-        throw new RuntimeException();
-    }
 }

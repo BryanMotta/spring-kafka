@@ -1,20 +1,16 @@
 package com.bryan.motta.spring.kafka.services;
 
-import com.bryan.motta.spring.kafka.annotations.Loggable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-
 @Service
-public class ConsumerService {
+public final class ConsumerService {
+    private static final Logger logger = LoggerFactory.getLogger(ConsumerService.class);
 
-    @Loggable
     @KafkaListener(topics = "kafkaTopic", groupId = "group_id")
     public void consume(String message) {
-    }
-
-    @KafkaListener(topics = "logs", groupId = "group_id")
-    public void consumeLogs(String message) {
-        System.out.println(message);
+        logger.info(String.format("$$$$ => Consumed message: %s", message));
     }
 }
