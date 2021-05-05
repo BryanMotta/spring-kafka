@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" name="spring-boot-log-to-kafka-example" packages="io.woolford">
+
+    <Properties>
+        <!--Kafka properties received from applications.properties -->
+        <Property name="bootstrap.servers">${bundle:application:kafka.host}</Property>
+        <Property name="kafka.topic">${bundle:application:kafka.topic}</Property>
+
+        <!--Log fields properties received from applications.properties -->
+        <Property name="SquadResponsible">${bundle:application:squad}</Property>
+        <Property name="ApplicationName">${bundle:application:application.name}</Property>
+        <Property name="ApplicationVersion">${bundle:application:application.version}</Property>
+        <Property name="ApplicationENV">${bundle:application:application.env}</Property>
+        <Property name="ApplicationPort">${bundle:application:server.port}</Property>
+
+        <!--Console Pattern -->
+        <Property name="ConsolePattern">%highlight{[%-5level]}{FATAL=white, ERROR=red, WARN=blue, INFO=Cyan, DEBUG=Magenta, TRACE=blue}[%style{%d{DATE}}{Green}] [%thread] [%style{(%c{-2})}{Cyan}] %msg %n%throwable</Property>
+    </Properties>
+
+    <Appenders>
+
+        <Kafka name="kafkaLogAppender" topic="${kafka.topic}">
+            <JSONLayout>
+                <!-- Use of custom fields -->
+                <KeyValuePair key="SquadResponsible" value="${SquadResponsible}"/>
+                <KeyValuePair key="ApplicationName" value="${ApplicationName}"/>
+                <KeyValuePair key="ApplicationVersion" value="${ApplicationVersion}"/>
+                <KeyValuePair key="ApplicationENV" value="${ApplicationENV}"/>
+                <KeyValuePair key="ApplicationPort" value="${ApplicationPort}"/>
+            </JSONLayout>
+            <Property name="bootstrap.servers">${bootstrap.servers}</Property>
+        </Kafka>
+
+        <Console name="stdout" target="SYSTEM_OUT">
+            <PatternLayout pattern="${ConsolePattern}" disableAnsi="false"/>
+        </Console>
+
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="kafkaLogAppender"/>
+            <AppenderRef ref="stdout"/>
+        </Root>
+        <!-- Do not let org.apache.kafka log to a Kafka appender on DEBUG level. That will cause recursive logging -->
+        <Logger name="org.apache.kafka" level="warn" />
+    </Loggers>
+</Configuration>
