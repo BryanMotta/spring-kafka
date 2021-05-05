@@ -12,4 +12,9 @@ public class ConsumerService {
     @KafkaListener(topics = "kafkaTopic", groupId = "group_id")
     public void consume(String message) {
     }
+
+    @KafkaListener(topics = "logs", groupId = "group_id")
+    public void consumeLogs(String message) {
+        System.out.println(message);
+    }
 }
